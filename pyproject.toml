@@ -1,0 +1,24 @@
+[project]
+name = "house-price-simple-analysis"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "BrayanMtz314", email = "brayan.mtz1615@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "pandas>=3.1.0",
+    "pydantic>=2.14.2",
+    "pyspark>=4.3.0",
+    "pyyaml>=6.0.3",
+    "scikit-learn>=1.9.1",
+]
+
+[project.scripts]
+house-price-simple-analysis = "house_price_simple_analysis:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"

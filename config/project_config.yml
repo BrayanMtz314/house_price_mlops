@@ -1,0 +1,38 @@
+project:
+  name: house-pricing
+  environment: dev
+
+data:
+  raw_data_path: data/house_prices.csv
+
+  num_features:
+    - square_footage
+
+  cat_features: []
+
+  unnecessary_features:
+    - num_bedrooms
+    - num_bathrooms
+    - year_built
+    - lot_size
+    - garage_size
+    - neighborhood_quality
+
+
+  target: house_price
+
+  test_size: 0.2
+  random_state: 42
+
+databricks:
+  catalog_name: mlops_dev
+  schema_name: house_pricing
+
+  train_table: train_set
+  test_table: test_set
+
+model:
+  fit_intercept: true
+
+mlflow:
+  experiment_name: /Shared/house-pricing-linear-regression
