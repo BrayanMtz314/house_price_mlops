@@ -7,17 +7,19 @@ import pandas as pd
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import current_timestamp
 from sklearn.model_selection import train_test_split
+from pathlib import Path
 
 from house_price_simple_analysis.config import ProjectConfig
 
 
 class DataProcessor:
 
-    def __init__(self, config: ProjectConfig, spark: SparkSession):
+    def __init__(self, config: ProjectConfig, spark: SparkSession, project_root: Path):
         self.config = config
         self.spark = spark
+        self.project_root = project_root
 
-        self.data_path = config.data.raw_data_path
+        self.data_path = self.project_root / config.data.raw_data_path
         self.catalog_name = config.databricks.catalog_name
         self.schema_name = config.databricks.schema_name
 

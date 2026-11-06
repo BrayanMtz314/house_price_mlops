@@ -3,7 +3,7 @@ project:
   environment: dev
 
 data:
-  raw_data_path: data/house_prices.csv
+  raw_data_path: data/house_price_regression_dataset.csv
 
   num_features:
     - square_footage
