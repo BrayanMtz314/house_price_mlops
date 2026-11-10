@@ -31,6 +31,7 @@ class DatabricksSettings(BaseModel):
 
 class ModelSettings(BaseModel):
     fit_intercept: bool = True
+    registered_model_name: str = "house_price_model"
 
 
 class MLflowSettings(BaseModel):

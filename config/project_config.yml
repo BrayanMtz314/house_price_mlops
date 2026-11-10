@@ -33,6 +33,7 @@ databricks:
 
 model:
   fit_intercept: true
+  registered_model_name: house_price_model
 
 mlflow:
   experiment_name: /Shared/house-pricing-linear-regression

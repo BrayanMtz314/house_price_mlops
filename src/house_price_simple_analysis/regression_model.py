@@ -73,6 +73,11 @@ class RegressionModel:
                     f"{name} dataset missing columns: {missing}"
                 )
 
+        for df in [self.train_set, self.test_set]:
+            df[self.config.data.num_features] = (
+            df[self.config.data.num_features].astype("float64")
+            )
+
     def prepare_model(self) -> None:
         """Initialize the linear regression model."""
 
@@ -165,3 +170,31 @@ class RegressionModel:
             self.model_uri = model_info.model_uri
 
         return self.model_uri
+    
+    def register_model(self) -> str:
+        """Register the logged model in Unity Catalog."""
+
+        if self.model_uri is None:
+            raise ValueError(
+                "Log the model before registering it."
+            )
+
+        mlflow.set_registry_uri("databricks-uc")
+
+        model_name = (
+            f"{self.catalog_name}.{self.schema_name}."
+            f"{self.config.model.registered_model_name}"
+        )
+
+        registered_model = mlflow.register_model(
+            model_uri=self.model_uri,
+            name=model_name
+        )
+
+        self.registered_model_name = registered_model.name
+        self.registered_model_version = registered_model.version
+
+        return (
+            f"models:/{registered_model.name}/"
+            f"{registered_model.version}"
+        )
