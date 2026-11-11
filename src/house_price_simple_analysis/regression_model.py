@@ -3,6 +3,7 @@
 
 import mlflow
 import mlflow.sklearn
+from mlflow import MlflowClient
 import numpy as np
 import pandas as pd
 
@@ -197,4 +198,20 @@ class RegressionModel:
         return (
             f"models:/{registered_model.name}/"
             f"{registered_model.version}"
+        )
+
+    def set_model_alias(self, alias: str = "Champion") -> None:
+        """Assign an alias to the registered model version."""
+
+        if not hasattr(self, "registered_model_version"):
+            raise ValueError("Register the model first.")
+
+        mlflow.set_registry_uri("databricks-uc")
+
+        client = MlflowClient()
+
+        client.set_registered_model_alias(
+            name=self.registered_model_name,
+            alias=alias,
+            version=self.registered_model_version
         )
