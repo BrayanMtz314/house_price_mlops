@@ -1,0 +1,18 @@
+
+resources:
+  jobs:
+    house_price_training:
+      name: house-price-training-bundle
+
+      max_concurrent_runs: 1
+
+      tasks:
+        - task_key: process_data
+          notebook_task:
+            notebook_path: ../notebooks/job_process_data.ipynb
+
+        - task_key: train_model
+          depends_on:
+            - task_key: process_data
+          notebook_task:
+            notebook_path: ../notebooks/job_train_model.ipynb
