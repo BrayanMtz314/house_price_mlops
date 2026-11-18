@@ -21,4 +21,4 @@ resources:
           depends_on:
             - task_key: train_model
           notebook_task:
-            notebook_path: ../notebooks/job_validate_model.py
+            notebook_path: ../notebooks/job_validate_model.ipynb
