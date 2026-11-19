@@ -22,3 +22,9 @@ resources:
             - task_key: train_model
           notebook_task:
             notebook_path: ../notebooks/job_validate_model.ipynb
+        
+        - task_key: register_candidate
+          depends_on:
+            - task_key: validate_model
+          notebook_task:
+            notebook_path: ../notebooks/job_register_candidate.ipynb
