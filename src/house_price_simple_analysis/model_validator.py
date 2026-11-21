@@ -3,6 +3,8 @@ import mlflow
 import mlflow.sklearn
 import numpy as np
 
+from mlflow import MlflowClient
+
 from pyspark.sql import SparkSession
 from sklearn.metrics import mean_squared_error
 
@@ -35,10 +37,20 @@ class ModelValidator:
             f"{config.model.registered_model_name}"
         )
 
-        self.champion_uri = (
-            f"models:/{self.model_name}@Champion"
+
+        client = MlflowClient(registry_uri="databricks-uc")
+
+        champion = client.get_model_version_by_alias(
+            name=self.model_name,
+            alias="Champion"
         )
 
+        self.champion_version = str(champion.version)
+
+        self.champion_uri = (
+            f"models:/{self.model_name}/{self.champion_version}"
+        )  
+        
         self.features = (
             config.data.num_features
             + config.data.cat_features
@@ -56,7 +68,22 @@ class ModelValidator:
             f"{self.config.databricks.test_table}"
         )
 
-        df = self.spark.table(table_name).toPandas()
+        self.evaluation_table = table_name
+
+        history = self.spark.sql(
+            f"DESCRIBE HISTORY {table_name}"
+        )
+
+        self.evaluation_version = int(
+            history.select("version").first()["version"]
+        )
+
+        df = (
+            self.spark.read
+            .option("versionAsOf", self.evaluation_version)
+            .table(table_name)
+            .toPandas()
+        )
 
         if df.empty:
             raise ValueError("Evaluation dataset is empty.")
@@ -115,4 +142,9 @@ class ModelValidator:
             "candidate_rmse": candidate_rmse,
             "improvement": improvement,
             "approved": approved,
+            "candidate_uri": self.candidate_uri,
+            "champion_version": self.champion_version,
+            "evaluation_table": self.evaluation_table,
+            "evaluation_version": self.evaluation_version,
+            "minimum_improvement": self.min_improvement,
         }
