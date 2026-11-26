@@ -2,6 +2,7 @@
 from pathlib import Path
 
 import pandas as pd
+import numpy as np
 
 from house_price_simple_analysis.config import ProjectConfig
 from house_price_simple_analysis.regression_model import RegressionModel
