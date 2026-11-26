@@ -60,7 +60,7 @@ class ModelRelease:
         self.lifecycle.client.set_model_version_tag(
             name=self.lifecycle.model_name,
             version=version,
-            key="release.previous_champion",
+            key="release_previous_champion",
             value=previous_version,
         )
 
@@ -108,7 +108,7 @@ class ModelRelease:
         )
 
         previous_version = released_model.tags.get(
-            "release.previous_champion"
+            "release_previous_champion"
         )
 
         if not previous_version:

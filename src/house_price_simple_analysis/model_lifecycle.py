@@ -55,15 +55,15 @@ class ModelLifecycle:
         version = str(registered.version)
 
         tags = {
-            "validation.status": "passed",
-            "validation.model_uri": model_uri,
-            "validation.champion_version": evidence["champion_version"],
-            "validation.evaluation_table": evidence["evaluation_table"],
-            "validation.evaluation_version": evidence["evaluation_version"],
-            "validation.candidate_rmse": evidence["candidate_rmse"],
-            "validation.champion_rmse": evidence["champion_rmse"],
-            "validation.improvement": evidence["improvement"],
-            "validation.minimum_improvement": evidence["minimum_improvement"],
+            "validation_status": "passed",
+            "validation_model_uri": model_uri,
+            "validation_champion_version": evidence["champion_version"],
+            "validation_evaluation_table": evidence["evaluation_table"],
+            "validation_evaluation_version": evidence["evaluation_version"],
+            "validation_candidate_rmse": evidence["candidate_rmse"],
+            "validation_champion_rmse": evidence["champion_rmse"],
+            "validation_improvement": evidence["improvement"],
+            "validation_minimum_improvement": evidence["minimum_improvement"],
         }
 
         for key, value in tags.items():
@@ -134,7 +134,7 @@ class ModelLifecycle:
 
         tags = model_version.tags or {}
 
-        if tags.get("validation.status") != "passed":
+        if tags.get("validation_status") != "passed":
             raise ValueError(
                 "This model version has no passing validation evidence."
             )
@@ -142,7 +142,7 @@ class ModelLifecycle:
         champion = self.get_model_by_alias("Champion")
 
         evaluated_champion = tags.get(
-            "validation.champion_version"
+            "validation_champion_version"
         )
 
         if evaluated_champion != str(champion.version):
@@ -151,8 +151,8 @@ class ModelLifecycle:
                 "Re-evaluate the candidate before promotion."
             )
 
-        improvement = float(tags["validation.improvement"])
-        threshold = float(tags["validation.minimum_improvement"])
+        improvement = float(tags["validation_improvement"])
+        threshold = float(tags["validation_minimum_improvement"])
 
         if improvement < threshold:
             raise ValueError(
