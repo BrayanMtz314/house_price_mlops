@@ -7,16 +7,16 @@ data:
 
   num_features:
     - square_footage
-
-  cat_features: []
-
-  unnecessary_features:
     - num_bedrooms
     - num_bathrooms
     - year_built
     - lot_size
     - garage_size
     - neighborhood_quality
+
+  cat_features: []
+
+  unnecessary_features: []
 
 
   target: house_price

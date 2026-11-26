@@ -20,20 +20,29 @@ def test_regression_model_training():
         spark=None
     )
 
-    # Create a small synthetic dataset
-    regression.train_set = pd.DataFrame({
-        "square_footage": [
-            1000.0, 1500.0, 2000.0, 2500.0, 3000.0
-        ],
-        "house_price": [
-            150000.0, 200000.0, 250000.0, 300000.0, 350000.0
-        ]
-    })
+    rng = np.random.default_rng(42)
 
-    regression.test_set = pd.DataFrame({
-        "square_footage": [1200.0, 2200.0],
-        "house_price": [170000.0, 270000.0]
-    })
+    features = config.data.num_features
+
+    feature_data = {
+        feature: rng.uniform(0, 1, 60)
+        for feature in features
+    }
+
+    df = pd.DataFrame(feature_data)
+
+    # Synthetic linear relationship
+    df[config.data.target] = (
+        200000
+        + sum(
+            (i + 1) * 5000 * df[feature]
+            for i, feature in enumerate(features)
+        )
+    )
+
+    regression.train_set = df.iloc[:45].copy()
+    regression.test_set = df.iloc[45:].copy()
+    
 
     # Execute model methods
     regression.prepare_model()

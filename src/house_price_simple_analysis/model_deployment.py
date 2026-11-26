@@ -51,17 +51,23 @@ class ModelDeployment:
             name=self.endpoint_name
         )
 
-    def predict(self, square_footage: float):
-        """Request a prediction from the serving endpoint."""
+    def predict(self, **features: float):
+        """Query the serving endpoint using named numerical features."""
+
+        if not features:
+            raise ValueError("At least one feature is required.")
+
+        record = {
+            name: float(value)
+            for name, value in features.items()
+        }
 
         response = self.workspace.serving_endpoints.query(
             name=self.endpoint_name,
-            dataframe_records=[
-                {"square_footage": float(square_footage)}
-            ],
+            dataframe_records=[record],
         )
 
-        return response.predictions
+        return response
 
     def update_to_champion(self, apply: bool = False):
         """Update a single-model endpoint to the Champion version."""

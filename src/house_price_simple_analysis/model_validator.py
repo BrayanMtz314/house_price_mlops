@@ -88,24 +88,46 @@ class ModelValidator:
         if df.empty:
             raise ValueError("Evaluation dataset is empty.")
 
-        X = df[self.features].copy()
-        X[self.config.data.num_features] = (
-            X[self.config.data.num_features].astype("float64")
-        )
+        # Keep all available feature columns
+        X = df.drop(columns=[self.target])
 
         y = df[self.target]
 
         return X, y
 
+    
     def evaluate_model(self, model_uri, X, y):
-        """Calculate RMSE for a registered or logged model."""
+        """Evaluate a model using its own expected features."""
 
         model = mlflow.sklearn.load_model(model_uri)
-        predictions = model.predict(X)
+
+        if not hasattr(model, "feature_names_in_"):
+            raise ValueError(
+                f"Model {model_uri} has no recorded feature names."
+            )
+
+        expected_features = list(model.feature_names_in_)
+
+        missing = [
+            feature
+            for feature in expected_features
+            if feature not in X.columns
+        ]
+
+        if missing:
+            raise ValueError(
+                f"Missing features for {model_uri}: {missing}"
+            )
+
+        # Select only the features expected by this model
+        X_model = X[expected_features].astype("float64")
+
+        predictions = model.predict(X_model)
 
         return float(
             np.sqrt(mean_squared_error(y, predictions))
         )
+
 
     def validate(self):
         """Compare Candidate and Champion performance."""
